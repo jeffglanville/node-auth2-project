@@ -70,8 +70,8 @@ router.post("/login", async (req, res, next) => {
 
 router.post("/register", async (req, res, next) => {
     try {
-        const { username, password } = req.body
-        const user = await Users.findBy({ username }).first()
+        const { username, password, department } = req.body
+        const user = await Users.findBy({ username, department }).first()
 
         if (user) {
             return res.status(409).json({
@@ -81,7 +81,8 @@ router.post("/register", async (req, res, next) => {
 
         const newUser = await Users.add({
             username,
-            password: await bcrypt.hash(password, 14)
+            password: await bcrypt.hash(password, 14),
+            department
         })
         res.status(201).json(newUser)
     }catch (err) {
@@ -89,7 +90,7 @@ router.post("/register", async (req, res, next) => {
     }
 })
 
-router.get("logout", async (req, res, next) => {
+router.get("/logout", async (req, res, next) => {
     try {
         req.session.destroy((err) => {
             if (err) {
